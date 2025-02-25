@@ -1,0 +1,32 @@
+---
+- name: Run Shell Script on Remote client
+  hosts: all
+
+  tasks:
+          - name: copy file
+            become: true
+            copy:
+                    src: /etc/ansible/playbooks/hdd.sh
+                    dest: /
+                    mode: '0755'
+
+          
+          
+          - name: Run Shell Script
+            shell: "/hdd.sh"
+            register: script_output
+
+          - name: Display output of the script
+            debug:
+                    var: script_output.stdout
+             
+          - name: Display error output of the script
+            debug:
+                  var: script_output.stderr          
+
+          - name: Generate HTML report
+            template: 
+              src: report_template.html.j2
+              dest: /tmp/script_output.html
+            delegate_to: localhost
+            run_once: true        
